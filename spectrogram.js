@@ -1,6 +1,8 @@
 (function(root) {
   'use strict';
 
+  var FFTSIZE = 1024;
+
   function _isFunction(v) {
     return typeof v === 'function';
   }
@@ -70,7 +72,7 @@
 
     source.analyser = source.audioContext.createAnalyser();
     source.analyser.smoothingTimeConstant = 0;
-    source.analyser.fftSize = 1024;
+    source.analyser.fftSize = FFTSIZE;
 
     source.analyser.connect(source.scriptNode);
     source.sourceNode.connect(source.analyser);
@@ -97,12 +99,14 @@
         if (this._audioEnded) {
           canvasContext.fillStyle = this._getColor(0);
         }
-        canvasContext.fillRect(width - 1, height - i, 1, 1);
+        var heightScaleFactor = height / FFTSIZE;
+        var x = width - 1;
+        var y = height - i * heightScaleFactor;
+        canvasContext.fillRect(x, y, 1, 1);
       }
 
       canvasContext.translate(-1, 0);
       // draw prev canvas before translation
-      canvasContext.drawImage(tempCanvas, 0, 0, width, height, 0, 0, width, height);
       canvasContext.drawImage(tempCanvas, 0, 0, width, height, 0, 0, width, height);
       // reset transformation matrix
       canvasContext.setTransform(1, 0, 0, 1, 0, 0);
